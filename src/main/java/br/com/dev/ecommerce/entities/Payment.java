@@ -1,6 +1,5 @@
 package br.com.dev.ecommerce.entities;
 
-import br.com.dev.ecommerce.enums.OrderStatus;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -12,8 +11,8 @@ import java.time.Instant;
 @Data
 @AllArgsConstructor
 @NoArgsConstructor
-@Table(name = "tb_order")
-public class Order {
+@Table(name = "tb_payment")
+public class Payment {
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -22,13 +21,8 @@ public class Order {
     @Column(columnDefinition = "TIMESTAMP WITHOUT TIME ZONE")
     private Instant moment;
 
-    private OrderStatus status;
-
-    @ManyToOne
-    @JoinColumn(name = "client_id")
-    private User client;
-
-    @OneToOne(mappedBy = "order",cascade = CascadeType.ALL)
-    private Payment payment;
+    @OneToOne
+    @MapsId
+    private Order order;
 
 }
