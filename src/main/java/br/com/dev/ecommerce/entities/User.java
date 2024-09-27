@@ -22,6 +22,7 @@ public class User {
 
     private String name;
 
+    @Column(unique = true) // configurando que será um campo unico
     private String email;
 
     private String phone;
