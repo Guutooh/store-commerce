@@ -29,7 +29,7 @@ public class User {
 
     private String password;
 
-    private LocalDate dateBirth;
+    private LocalDate birthDate;
 
     @OneToMany(mappedBy = "client")
     private List<Order> orders = new ArrayList<>();
