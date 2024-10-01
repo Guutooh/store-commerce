@@ -3,6 +3,7 @@ package br.com.dev.ecommerce.entities;
 import jakarta.persistence.EmbeddedId;
 import jakarta.persistence.Entity;
 import jakarta.persistence.Table;
+import lombok.EqualsAndHashCode;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -11,12 +12,14 @@ import lombok.Setter;
 // Utiliza uma chave composta, representada por OrderItemPK, para referenciar essas associações de maneira única.
 @Entity
 @Table(name = "tb_order_item")
+@EqualsAndHashCode(onlyExplicitlyIncluded = true)
 public class OrderItem {
 
     // A anotação @EmbeddedId indica que a chave primária é composta por múltiplas colunas.
     // Neste caso, a chave composta está sendo gerida pela classe OrderItemPK, que armazena a referência do pedido (Order)
     // e do produto (Product). Isso permite a combinação única de um pedido específico com um produto específico.
     @EmbeddedId
+    @EqualsAndHashCode.Include
     private OrderItemPK id = new OrderItemPK(); // Instancia o ID composto com uma nova instância vazia de OrderItemPK.
 
     @Getter

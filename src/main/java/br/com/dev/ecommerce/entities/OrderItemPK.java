@@ -5,6 +5,7 @@ import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
 
 
@@ -16,6 +17,7 @@ import lombok.NoArgsConstructor;
 @AllArgsConstructor
 @NoArgsConstructor
 @Embeddable  //A anotação @Embeddable indica que essa classe será incorporada em outra como uma chave primária.
+@EqualsAndHashCode
 public class OrderItemPK {
 
     // A anotação @ManyToOne indica que muitos itens de pedido podem estar associados a um único pedido (Order).
