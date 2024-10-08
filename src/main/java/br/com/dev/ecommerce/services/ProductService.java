@@ -13,7 +13,7 @@ import org.springframework.transaction.annotation.Transactional;
 import java.util.List;
 
 @Service
-@Transactional(readOnly = true)
+
 public class ProductService {
 
     @Autowired
@@ -22,7 +22,7 @@ public class ProductService {
     @Autowired
     private ModelMapper mapper;
 
-
+    @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
 
         Product product = repository.findById(id).get();
@@ -30,11 +30,21 @@ public class ProductService {
         return mapper.map(product, ProductDTO.class);
     }
 
+    @Transactional(readOnly = true)
     public Page<ProductDTO> findAll(Pageable pageable) {
 
         Page<Product> result = repository.findAll(pageable);
 
         return result.map(product -> mapper.map(product, ProductDTO.class));
+
+    }
+
+    public ProductDTO insert(ProductDTO dto) {
+
+        Product product = mapper.map(dto, Product.class);
+
+        return mapper.map(repository.save(product), ProductDTO.class);
+
 
     }
 
