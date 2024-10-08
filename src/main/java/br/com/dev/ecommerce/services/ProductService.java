@@ -48,4 +48,22 @@ public class ProductService {
 
     }
 
+
+    public ProductDTO update (Long id, ProductDTO dto) {
+
+        // Busca o produto pelo ID ou lança exceção se não for encontrado
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found"));
+
+        // Mapeia as mudanças do DTO para o produto existente
+        mapper.map(dto, product);
+
+        // Salva o produto atualizado no banco de dados
+        product = repository.save(product);
+
+        // Retorna o produto atualizado como DTO
+        return mapper.map(product, ProductDTO.class);
+
+    }
+
 }
