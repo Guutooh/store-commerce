@@ -2,15 +2,18 @@ package br.com.dev.ecommerce.services;
 
 import br.com.dev.ecommerce.dto.ProductDTO;
 import br.com.dev.ecommerce.entities.Product;
+import br.com.dev.ecommerce.exceptions.DatabaseException;
+import br.com.dev.ecommerce.exceptions.ResourceNotFoundException;
 import br.com.dev.ecommerce.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataIntegrityViolationException;
+import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
-
-import java.util.List;
 
 @Service
 
@@ -25,7 +28,8 @@ public class ProductService {
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
 
-        Product product = repository.findById(id).get();
+        Product product = repository.findById(id)
+                .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
 
         return mapper.map(product, ProductDTO.class);
     }
@@ -49,11 +53,11 @@ public class ProductService {
     }
 
 
-    public ProductDTO update (Long id, ProductDTO dto) {
+    public ProductDTO update(Long id, ProductDTO dto) {
 
         // Busca o produto pelo ID ou lança exceção se não for encontrado
         Product product = repository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Product not found"));
+                .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
 
         // Mapeia as mudanças do DTO para o produto existente
         mapper.map(dto, product);
@@ -66,9 +70,22 @@ public class ProductService {
 
     }
 
+    @Transactional(propagation = Propagation.SUPPORTS)
     public void delete(Long id) {
 
-        repository.deleteById(id);
+        if (!repository.existsById(id)) {
+            throw new ResourceNotFoundException("Recurso não encontrado com ID: " + id);
+        }
+        try {
+            repository.deleteById(id);
+
+        } catch (DataIntegrityViolationException e) {
+
+            throw new DatabaseException("Falha de integridade referencial ao excluir o recurso com ID: " + id);
+        }
     }
+
+
+
 
 }

@@ -60,7 +60,7 @@ public class ProductController {
 
     }
 
-    @Transactional
+
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable Long id) {
 
