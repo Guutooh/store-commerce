@@ -1,7 +1,6 @@
 package br.com.dev.ecommerce.dto;
 
 
-import br.com.dev.ecommerce.entities.Product;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
@@ -21,13 +20,15 @@ public class ProductDTO {
     
     private String imgUrl;
 
-    public ProductDTO(Product entity) {
-        id = entity.getId();
-        name = entity.getName();
-        description = entity.getDescription();
-        price = entity.getPrice();
-        imgUrl = entity.getImgUrl();
-    }
+
+
+//    public ProductDTO(Product entity) {
+//        id = entity.getId();
+//        name = entity.getName();
+//        description = entity.getDescription();
+//        price = entity.getPrice();
+//        imgUrl = entity.getImgUrl();
+//    }
 
 
 }
