@@ -8,7 +8,6 @@ import br.com.dev.ecommerce.repositories.ProductRepository;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
-import org.springframework.dao.EmptyResultDataAccessException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
@@ -16,7 +15,6 @@ import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 @Service
-
 public class ProductService {
 
     @Autowired
@@ -35,9 +33,9 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(Pageable pageable) {
+    public Page<ProductDTO> findAll(String name, Pageable pageable) {
 
-        Page<Product> result = repository.findAll(pageable);
+        Page<Product> result = repository.searchByName(name,pageable);
 
         return result.map(product -> mapper.map(product, ProductDTO.class));
 
@@ -84,8 +82,5 @@ public class ProductService {
             throw new DatabaseException("Falha de integridade referencial ao excluir o recurso com ID: " + id);
         }
     }
-
-
-
 
 }
