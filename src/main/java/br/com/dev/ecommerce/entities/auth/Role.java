@@ -5,6 +5,9 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.EqualsAndHashCode;
 import lombok.NoArgsConstructor;
+import org.springframework.security.core.GrantedAuthority;
+
+import java.io.Serializable;
 
 @Entity
 @Data
@@ -12,7 +15,9 @@ import lombok.NoArgsConstructor;
 @NoArgsConstructor
 @Table(name = "tb_role")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Role {
+public class Role implements GrantedAuthority, Serializable {
+
+    private static final long serialVersionUID = 1L;
 
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -20,4 +25,14 @@ public class Role {
 
     @EqualsAndHashCode.Include
     private String authority;
+    /*
+     * Não deu problema na implementação porque o nome do atributo já está igual ao da interface.
+     * Não precisa do @Override porque a interface GrantedAuthority já possui apenas o método
+     * getAuthority() e o Lombok através do @Data já gera esse método com a mesma assinatura.
+     */
+
+//    @Override
+//    public String getAuthority() {
+//        return authority;
+//    }
 }
