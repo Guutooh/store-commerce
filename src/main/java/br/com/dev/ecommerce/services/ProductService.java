@@ -10,6 +10,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
+import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
@@ -22,6 +23,9 @@ public class ProductService {
 
     @Autowired
     private ModelMapper mapper;
+
+    @Autowired
+    private PasswordEncoder encoder;
 
     @Transactional(readOnly = true)
     public ProductDTO findById(Long id) {
@@ -44,6 +48,7 @@ public class ProductService {
     public ProductDTO insert(ProductDTO dto) {
 
         Product product = mapper.map(dto, Product.class);
+
 
         return mapper.map(repository.save(product), ProductDTO.class);
 
