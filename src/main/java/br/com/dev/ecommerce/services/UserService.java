@@ -1,14 +1,19 @@
 package br.com.dev.ecommerce.services;
 
+import br.com.dev.ecommerce.dto.UserDTO;
 import br.com.dev.ecommerce.entities.User;
 import br.com.dev.ecommerce.entities.auth.Role;
 import br.com.dev.ecommerce.repositories.UserRepository;
 import br.com.dev.ecommerce.repositories.projections.UserDetailsProjection;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
+import org.springframework.security.oauth2.jwt.Jwt;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
@@ -33,7 +38,7 @@ public class UserService implements UserDetailsService {
         List<UserDetailsProjection> result = repository.searchUserAndRolesByEmail(username);
 
         // Se não encontrou usuário, lança exceção
-        if(result.isEmpty()){
+        if (result.isEmpty()) {
             throw new UsernameNotFoundException(String.format("User: %s not found", username));
         }
 
@@ -44,10 +49,32 @@ public class UserService implements UserDetailsService {
 
         // Adiciona todas as roles encontradas para o usuário
         // Um usuário pode ter múltiplas roles, por isso o loop
-        for(UserDetailsProjection projection : result){
+        for (UserDetailsProjection projection : result) {
             user.addRole(new Role(projection.getRoleId(), projection.getAuthority()));
         }
 
         return user; // Retorna usuário com seus dados e permissões
     }
+
+    protected User authenticate() {
+
+        try {
+
+            Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
+            Jwt jwtPrincipal = (Jwt) authentication.getPrincipal();
+            String username = jwtPrincipal.getClaim("username");
+
+            return repository.findByEmail(username).get();
+
+        } catch (Exception e) {
+            throw new UsernameNotFoundException(e.getMessage());
+        }
+    }
+
+    @Transactional(readOnly = true)
+    public UserDTO getMe() {
+        User user = authenticate();
+        return new UserDTO(user);
+    }
+
 }

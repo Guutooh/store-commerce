@@ -1,6 +1,7 @@
 package br.com.dev.ecommerce.controllers;
 
 import br.com.dev.ecommerce.dto.ProductDTO;
+import br.com.dev.ecommerce.dto.UserDTO;
 import br.com.dev.ecommerce.services.ProductService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -21,12 +22,10 @@ public class ProductController {
     @Autowired
     private ProductService service;
 
-    @PreAuthorize("hasAnyRole('ROLE_ADMIN', 'ROLE_OPERATOR')")
+
     @GetMapping("/{id}")
     public ResponseEntity<ProductDTO> findById(@PathVariable Long id) {
-
         return ResponseEntity.ok(service.findById(id));
-
     }
 
     @GetMapping()
