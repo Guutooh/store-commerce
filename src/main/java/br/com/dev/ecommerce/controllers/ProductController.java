@@ -1,6 +1,7 @@
 package br.com.dev.ecommerce.controllers;
 
 import br.com.dev.ecommerce.dto.ProductDTO;
+import br.com.dev.ecommerce.dto.ProductMinDTO;
 import br.com.dev.ecommerce.dto.UserDTO;
 import br.com.dev.ecommerce.services.ProductService;
 import jakarta.validation.Valid;
@@ -29,7 +30,7 @@ public class ProductController {
     }
 
     @GetMapping()
-    public ResponseEntity<Page<ProductDTO>> findAll(@RequestParam(name = "name", defaultValue = "") String name, Pageable pageable) {
+    public ResponseEntity<Page<ProductMinDTO>> findAll(@RequestParam(name = "name", defaultValue = "") String name, Pageable pageable) {
 
         return ResponseEntity.ok(service.findAll(name, pageable));
     }

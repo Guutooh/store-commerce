@@ -1,6 +1,7 @@
 package br.com.dev.ecommerce.services;
 
 import br.com.dev.ecommerce.dto.ProductDTO;
+import br.com.dev.ecommerce.dto.ProductMinDTO;
 import br.com.dev.ecommerce.entities.Product;
 import br.com.dev.ecommerce.exceptions.DatabaseException;
 import br.com.dev.ecommerce.exceptions.ResourceNotFoundException;
@@ -37,11 +38,11 @@ public class ProductService {
     }
 
     @Transactional(readOnly = true)
-    public Page<ProductDTO> findAll(String name, Pageable pageable) {
+    public Page<ProductMinDTO> findAll(String name, Pageable pageable) {
 
         Page<Product> result = repository.searchByName(name,pageable);
 
-        return result.map(product -> mapper.map(product, ProductDTO.class));
+        return result.map(product -> mapper.map(product, ProductMinDTO.class));
 
     }
 
