@@ -1,11 +1,14 @@
 package br.com.dev.ecommerce.services;
 
+import br.com.dev.ecommerce.dto.CategoryDTO;
 import br.com.dev.ecommerce.dto.ProductDTO;
 import br.com.dev.ecommerce.dto.ProductMinDTO;
+import br.com.dev.ecommerce.entities.Category;
 import br.com.dev.ecommerce.entities.Product;
 import br.com.dev.ecommerce.exceptions.DatabaseException;
 import br.com.dev.ecommerce.exceptions.ResourceNotFoundException;
 import br.com.dev.ecommerce.repositories.ProductRepository;
+import jakarta.persistence.EntityNotFoundException;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.dao.DataIntegrityViolationException;
@@ -40,38 +43,43 @@ public class ProductService {
     @Transactional(readOnly = true)
     public Page<ProductMinDTO> findAll(String name, Pageable pageable) {
 
-        Page<Product> result = repository.searchByName(name,pageable);
+        Page<Product> result = repository.searchByName(name, pageable);
 
         return result.map(product -> mapper.map(product, ProductMinDTO.class));
 
     }
 
+
+    @Transactional
     public ProductDTO insert(ProductDTO dto) {
 
-        Product product = mapper.map(dto, Product.class);
+        Product entity = new Product();
 
+        copyDtoToEntity(dto, entity);
 
-        return mapper.map(repository.save(product), ProductDTO.class);
+        entity = repository.save(entity);
 
-
+        return new ProductDTO(entity);
     }
 
 
+    @Transactional
     public ProductDTO update(Long id, ProductDTO dto) {
 
-        // Busca o produto pelo ID ou lança exceção se não for encontrado
-        Product product = repository.findById(id)
-                .orElseThrow(() -> new ResourceNotFoundException("Recurso não encontrado"));
+        try {
 
-        // Mapeia as mudanças do DTO para o produto existente
-        mapper.map(dto, product);
+            Product entity = repository.getReferenceById(id);
 
-        // Salva o produto atualizado no banco de dados
-        product = repository.save(product);
+            copyDtoToEntity(dto, entity);
 
-        // Retorna o produto atualizado como DTO
-        return mapper.map(product, ProductDTO.class);
+            entity = repository.save(entity);
 
+            return new ProductDTO(entity);
+
+        } catch (EntityNotFoundException e) {
+
+            throw new ResourceNotFoundException("Recurso não encontrado");
+        }
     }
 
     @Transactional(propagation = Propagation.SUPPORTS)
@@ -86,6 +94,21 @@ public class ProductService {
         } catch (DataIntegrityViolationException e) {
 
             throw new DatabaseException("Falha de integridade referencial ao excluir o recurso com ID: " + id);
+        }
+    }
+
+    private void copyDtoToEntity(ProductDTO dto, Product entity) {
+        entity.setName(dto.getName());
+        entity.setDescription(dto.getDescription());
+        entity.setPrice(dto.getPrice());
+        entity.setImgUrl(dto.getImgUrl());
+
+        entity.getCategories().clear();
+
+        for (CategoryDTO catDto : dto.getCategories()) {
+            Category cat = new Category();
+            cat.setId(catDto.getId());
+            entity.getCategories().add(cat);
         }
     }
 

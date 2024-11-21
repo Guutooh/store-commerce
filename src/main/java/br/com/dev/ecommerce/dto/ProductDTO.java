@@ -1,12 +1,18 @@
 package br.com.dev.ecommerce.dto;
 
 
+import br.com.dev.ecommerce.entities.Category;
+import br.com.dev.ecommerce.entities.Product;
 import jakarta.validation.constraints.NotBlank;
+import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Positive;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import java.util.ArrayList;
+import java.util.List;
 
 @Data
 @AllArgsConstructor
@@ -28,5 +34,19 @@ public class ProductDTO {
 
     private String imgUrl;
 
+    @NotEmpty(message = "Deve ter pelo menos uma categoria")
+    private List<CategoryDTO> categories = new ArrayList<>();
+
+
+    public ProductDTO(Product entity) {
+        id = entity.getId();
+        name = entity.getName();
+        description = entity.getDescription();
+        price = entity.getPrice();
+        imgUrl = entity.getImgUrl();
+        for (Category cat : entity.getCategories()) {
+            categories.add(new CategoryDTO(cat));
+        }
+    }
 
 }
