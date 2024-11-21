@@ -128,11 +128,17 @@ public class ResourceServerConfig {
 	 *
 	 * @return Registro do filtro de CORS.
 	 */
+//	@Bean
+//	FilterRegistrationBean<CorsFilter> corsFilter() {
+//		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(
+//				new CorsFilter(corsConfigurationSource()));
+//		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
+//		return bean;
+//	}
+
 	@Bean
-	FilterRegistrationBean<CorsFilter> corsFilter() {
-		FilterRegistrationBean<CorsFilter> bean = new FilterRegistrationBean<>(
-				new CorsFilter(corsConfigurationSource()));
-		bean.setOrder(Ordered.HIGHEST_PRECEDENCE);
-		return bean;
+	@Order(Ordered.HIGHEST_PRECEDENCE)
+	public CorsFilter corsFilter() {
+		return new CorsFilter(corsConfigurationSource());
 	}
 }

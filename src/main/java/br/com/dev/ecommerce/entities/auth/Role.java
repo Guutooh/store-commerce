@@ -1,5 +1,6 @@
 package br.com.dev.ecommerce.entities.auth;
 
+import br.com.dev.ecommerce.services.ProductService;
 import jakarta.persistence.*;
 import lombok.AllArgsConstructor;
 import lombok.Data;
@@ -15,7 +16,7 @@ import java.io.Serializable;
 @NoArgsConstructor
 @Table(name = "tb_role")
 @EqualsAndHashCode(onlyExplicitlyIncluded = true)
-public class Role implements GrantedAuthority, Serializable {
+public class Role extends ProductService implements GrantedAuthority, Serializable {
 
     private static final long serialVersionUID = 1L;
 
