@@ -56,7 +56,7 @@ public class UserService implements UserDetailsService {
         return user; // Retorna usuário com seus dados e permissões
     }
 
-    protected User authenticate() {
+    protected User authenticated() {
 
         try {
 
@@ -73,7 +73,7 @@ public class UserService implements UserDetailsService {
 
     @Transactional(readOnly = true)
     public UserDTO getMe() {
-        User user = authenticate();
+        User user = authenticated();
         return new UserDTO(user);
     }
 
